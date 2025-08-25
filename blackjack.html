@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blackjack</title> 
+    <link rel="stylesheet" href="style.css"/>
+    <style>
+        #gameCanvas {
+            width: 80vw;
+            height: 80vh;
+            border: 3px solid black;
+        }
+
+        #hitButton {
+            width: 10vw;
+            height: 10vw;
+            border: 3px solid black;
+        }
+
+        #standButton {
+            width: 10vw;
+            height: 10vh;
+            border: 3px solid black;
+        }
+    </style>
+</head>
+<body>
+    <h1> Blackjack </h1>
+    <canvas id="gameCanvas"> </canvas>
+    <button id="hitButton"> Hit </button>
+    <button id="standButton"> Stand </button>
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        const hitButton = document.getElementById("hitButton");
+        const standButton = document.getElementById("standButton");
+
+        function resize() {
+            canvas.width = innerWidth * .8;
+            canvas.height = innerHeight * .8;
+        }
+        resize();
+
+        window.addEventListener('resize', resize);
+    </script>
+
+</body>
+</html>
