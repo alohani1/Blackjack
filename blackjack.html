@@ -11,22 +11,18 @@
             border: 3px solid black;
             background-color: olivedrab;
         }
-
         #hitButton {
             position: fixed;
             top: 10vh;
         }
-
         #standButton {
             position: fixed;
             top: 36.7vh;
         }
-        
         #playagainButton {
             position: fixed;
             top: 63.4vh;
         }
-
         .btn {
             border: 3px solid black;
             background-color:darkseagreen;
@@ -34,17 +30,14 @@
             width: 10vw;
             height: 26.7vh;
         }
-
         .btn:hover {
             color:aliceblue;
             border: 10px solid black;
         }
-
-        .card{
+        .cards{
             width: 10vw;
             height: 25vh;
-            border: 2px solid black;
-            
+            border: 2px solid black;    
         }
         .hearts {
             color:red;
@@ -52,7 +45,6 @@
         .diamonds {
             color: red;
         }
-
         .spades {
             color: black;
         }
@@ -67,13 +59,13 @@
     <button id="hitButton" class="btn"> Hit </button>
     <button id="standButton" class="btn"> Stand </button>
     <button id="playagainButton" class="btn"> Play Again </button>
+    <div class="cards"></div>
     <script>
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
         const hitButton = document.getElementById("hitButton");
         const standButton = document.getElementById("standButton");
         const playagainButton = document.getElementById("playagainButton");
-
 
         function resize() {
             canvas.width = innerWidth * .8;
@@ -82,7 +74,8 @@
         resize();
         window.addEventListener('resize', resize);
 
-
+        const suit = ["hearts", "diamonds", "spades", "clubs"];
+        const values = ["A", "2", "3", "4", "5", "6", "7", "8", "9","10", "J", "Q", "K"];
         var cards = []
 
 
