@@ -35,9 +35,29 @@
             border: 10px solid black;
         }
         .cards{
-            width: 10vw;
-            height: 25vh;
-            border: 2px solid black;    
+            position:fixed;
+            top: 36.7vh;
+            left: 10vw;
+            width: 8vw;
+            height: 20vh;
+            border: 2px solid black;   
+        }
+        .card-back{
+            background: 
+            repeating-linear-gradient(
+                45deg,
+                red,
+                red 10px,
+                transparent 10px,
+                transparent 20px
+            ),
+            repeating-linear-gradient(
+                -45deg,
+                red,
+                red 5px,
+                white 5px,
+                white 10px
+            );
         }
         .hearts {
             color:red;
@@ -59,13 +79,14 @@
     <button id="hitButton" class="btn"> Hit </button>
     <button id="standButton" class="btn"> Stand </button>
     <button id="playagainButton" class="btn"> Play Again </button>
-    <div class="cards"></div>
+    <div id="deck"></div>
     <script>
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
         const hitButton = document.getElementById("hitButton");
         const standButton = document.getElementById("standButton");
         const playagainButton = document.getElementById("playagainButton");
+        const deck = document.getElementById("deck");
 
         function resize() {
             canvas.width = innerWidth * .8;
@@ -76,7 +97,15 @@
 
         const suit = ["hearts", "diamonds", "spades", "clubs"];
         const values = ["A", "2", "3", "4", "5", "6", "7", "8", "9","10", "J", "Q", "K"];
-        var cards = []
+        suit.forEach((suit) => {
+            values.forEach((value) => {
+                const card = document.createElement("div");
+                card.classList.add("cards", "card-back", suit);
+                card.textContext = value;
+                deck.appendChild(card);
+
+            });
+        });
 
 
 
