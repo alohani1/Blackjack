@@ -109,7 +109,6 @@
         const dealerCards = [];
         const playerCards = [];
         const trashCards = [];
-        let numStands = 0;
         var plysum;
         var dealsum;
         const cardValue = {
@@ -217,7 +216,7 @@
             return currentSum
         }
         function dealerSum() {
-            var currentSum;
+            var currentSum = 0;
             dealerCards.forEach((dealerCard) => {
                 currentSum += parseInt(dealerCard.dataset.value);
             });
@@ -226,11 +225,16 @@
 
         function startGame() {
             clear();
+            plysum = 0;
+            dealsum = 0;
             createDeck();
             dealStartingCards();
-            if ((plysum = playerSum()) == 21) {
-                alert("You Won!");
-            }  
+            plysum = playerSum();
+            if(plysum > 21) {
+                setTimeout(() => {
+                    alert("Game Over!");
+                }, 60);
+            }
         }
 
         function hit() {
@@ -249,21 +253,38 @@
         }
 
         function stand() {
-            if (numStands == 0) {
-                flipFirstCard();
-            }
+            flipFirstCard();
             dealsum = dealerSum();
-            while (dealsum <= 17) {
-                dealDealerCards();
-                dealsum = dealerSum();
+            function dealerChoice() {
+                if (dealsum <= 17) {
+                    setTimeout (() => {
+                        dealDealerCards();
+                        dealsum = dealerSum();
+                        dealerChoice();
+                    },600);
+                } else {
+                    if (dealsum > 21) {
+                        setTimeout(() => {
+                            alert("You Win!");
+                        }, 60);
+                    }
+                    if (dealsum > plysum && dealsum <=21) {
+                        setTimeout(() => {
+                            alert("You Lose!");
+                        }, 60);
+                    } else if (plysum > dealsum) {
+                        setTimeout(() => {
+                            alert("You Win!");
+                        }, 60);
+                    } else if(dealsum == plysum) {
+                        setTimeout(() => {
+                            alert("You Tie!");
+                        }, 60);
+                    }
+                }
             }
-            if (dealsum > 21) {
-                setTimeout (() => {
-                    alert("You Win!");
-                }, 60);
-            }
-            numStands++;
 
+            dealerChoice();
         }
 
         playagainButton.addEventListener("click", function() {
@@ -276,19 +297,6 @@
 
         standButton.addEventListener("click", function() {
             stand();
-            if (dealsum > plysum) {
-                setTimeout(() => {
-                    alert("You Lose!");
-                }, 60);
-            } else if (plysum > dealsum) {
-                setTimeout(() => {
-                    alert("You Win!");
-                }, 60);
-            } else {
-                setTimeout(() => {
-                    alert("You Tie!");
-                }, 60);
-            }
         });
 
         
