@@ -34,7 +34,7 @@
             color:aliceblue;
             border: 10px solid black;
         }
-        .cards{
+        .deckCards{
             position:fixed;
             top: 36.7vh;
             left: 10vw;
@@ -42,7 +42,25 @@
             height: 20vh;
             border: 2px solid black;   
         }
+        .dealerCards{
+            position: fixed;
+            top: 15vh;
+            left: 40vw;
+            width: 8vw;
+            height: 20vh;
+            border: 2px solid black;
+            background-color: white;
+        }
+        .playerCards {
+            position: fixed;
+            top: 58vh;
+            width: 8vw;
+            height: 20vh;
+            border: 2 px solid black;
+            background-color: white;
+        }
         .card-back{
+            text-indent: -99999px;
             background: 
             repeating-linear-gradient(
                 45deg,
@@ -78,7 +96,7 @@
     <canvas id="gameCanvas"> </canvas>
     <button id="hitButton" class="btn"> Hit </button>
     <button id="standButton" class="btn"> Stand </button>
-    <button id="playagainButton" class="btn"> Play Again </button>
+    <button id="playagainButton" class="btn"> Begin/Play Again </button>
     <div id="deck"></div>
     <script>
         const canvas = document.getElementById("gameCanvas");
@@ -87,7 +105,28 @@
         const standButton = document.getElementById("standButton");
         const playagainButton = document.getElementById("playagainButton");
         const deck = document.getElementById("deck");
-
+        const deckCards = [];
+        const dealerCards = [];
+        const playerCards = [];
+        const trashCards = [];
+        let numStands = 0;
+        var plysum;
+        var dealsum;
+        const cardValue = {
+            "2" : 2,
+            "3": 3,
+            "4": 4,
+            "5": 5,
+            "6": 6,
+            "7": 7,
+            "8": 8,
+            "9": 9,
+            "10": 10,
+            "J": 10,
+            "Q": 10,
+            "K": 10,
+            "A": 11,
+        }
         function resize() {
             canvas.width = innerWidth * .8;
             canvas.height = innerHeight * .8;
@@ -97,15 +136,162 @@
 
         const suit = ["hearts", "diamonds", "spades", "clubs"];
         const values = ["A", "2", "3", "4", "5", "6", "7", "8", "9","10", "J", "Q", "K"];
-        suit.forEach((suit) => {
-            values.forEach((value) => {
-                const card = document.createElement("div");
-                card.classList.add("cards", "card-back", suit);
-                card.textContext = value;
-                deck.appendChild(card);
+        function createDeck() {
+            
+            suit.forEach((suit) => {
+                values.forEach((value) => {
+                    const card = document.createElement("div");
+                    card.classList.add("deckCards", "card-back", suit);
+                    card.textContent = value;
+                    card.dataset.value = cardValue[value];
+                    deck.appendChild(card);
+                    deckCards.push(card);
 
+                });
             });
+        }
+
+        function clear() {
+            deck.innerHTML = "";
+            deckCards.length = 0;
+            playerCards.length = 0;
+            dealerCards.length = 0;
+            playerCards.forEach(card => card.remove());
+            dealerCards.forEach(card => card.remove());
+        }
+
+        function getRandomCard(playCards) {
+            let cardTodeal = Math.floor(Math.random() * deckCards.length);
+            //deckCards[cardTodeal].classList.remove("card-back");
+            //deckCards[cardTodeal].classList.add("card-front");
+            playCards.push(deckCards[cardTodeal]);
+            deckCards.splice(cardTodeal, 1);
+        }
+
+        function dealStartingCards() {
+            for(var i = 0; i < 2; i++) {
+                getRandomCard(dealerCards);
+            }
+            dealerCards.forEach((dealerCard, index) => {
+                dealerCard.classList.add("dealerCards");
+                dealerCard.style.left = `${33 +index * 10}vw`;
+            });
+            dealerCards[0].classList.remove("card-back");
+            dealerCards[0].classList.add("card-front");
+            for(var i = 0; i < 2; i++) {
+                getRandomCard(playerCards);
+            }
+            playerCards.forEach((playerCard, index) => {
+                playerCard.classList.add("playerCards");
+                playerCard.style.left = `${33 + index * 10}vw`;
+            });
+            playerCards[0].classList.remove("card-back");
+            playerCards[1].classList.remove("card-back");
+            playerCards[0].classList.add("card-front");
+            playerCards[1].classList.add("card-front");
+        }
+
+        function dealPlayerCards() {
+            getRandomCard(playerCards);
+            var indx = playerCards.length - 1;
+            playerCards[indx].classList.add("playerCards");
+            playerCards[indx].classList.remove("card-back");
+            playerCards[indx].classList.add("card-front");
+            playerCards[indx].style.left = `${33 + indx * 10}vw`;
+        }
+
+        function dealDealerCards() {
+            getRandomCard(dealerCards);
+            var indx = dealerCards.length - 1;
+            dealerCards[indx].classList.add("dealerCards");
+            dealerCards[indx].classList.remove("card-back");
+            dealerCards[indx].classList.add("card-front");
+            dealerCards[indx].style.left = `${33 + indx * 10}vw`;
+        }
+
+        function playerSum() {
+            var currentSum = 0;
+            playerCards.forEach((playerCard) => {
+                currentSum += parseInt(playerCard.dataset.value);
+            });
+            return currentSum
+        }
+        function dealerSum() {
+            var currentSum;
+            dealerCards.forEach((dealerCard) => {
+                currentSum += parseInt(dealerCard.dataset.value);
+            });
+            return currentSum;
+        }
+
+        function startGame() {
+            clear();
+            createDeck();
+            dealStartingCards();
+            if ((plysum = playerSum()) == 21) {
+                alert("You Won!");
+            }  
+        }
+
+        function hit() {
+            dealPlayerCards();
+            plysum = playerSum();
+            if (plysum > 21) {
+                setTimeout (() => {
+                    alert("Game Over");
+                }, 60);
+                
+            }
+        }
+        function flipFirstCard() {
+            dealerCards[1].classList.remove("card-back");
+            dealerCards[1].classList.add("card-front");
+        }
+
+        function stand() {
+            if (numStands == 0) {
+                flipFirstCard();
+            }
+            dealsum = dealerSum();
+            while (dealsum <= 17) {
+                dealDealerCards();
+                dealsum = dealerSum();
+            }
+            if (dealsum > 21) {
+                setTimeout (() => {
+                    alert("You Win!");
+                }, 60);
+            }
+            numStands++;
+
+        }
+
+        playagainButton.addEventListener("click", function() {
+            startGame();
         });
+
+        hitButton.addEventListener("click", function () {
+            hit();
+        });
+
+        standButton.addEventListener("click", function() {
+            stand();
+            if (dealsum > plysum) {
+                setTimeout(() => {
+                    alert("You Lose!");
+                }, 60);
+            } else if (plysum > dealsum) {
+                setTimeout(() => {
+                    alert("You Win!");
+                }, 60);
+            } else {
+                setTimeout(() => {
+                    alert("You Tie!");
+                }, 60);
+            }
+        });
+
+        
 
 
 
