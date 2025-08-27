@@ -210,9 +210,23 @@
 
         function playerSum() {
             var currentSum = 0;
-            playerCards.forEach((playerCard) => {
+            var aces = 0;
+            var aceIndex = [];
+            playerCards.forEach((playerCard, index) => {
+                if (playerCard.dataset.value == "11") {
+                    aces++;
+                    aceIndex.push(index);
+                }
                 currentSum += parseInt(playerCard.dataset.value);
             });
+
+            if (currentSum > 21) {
+                aceIndex.forEach((index) => {
+                    if (currentSum > 21) {
+                        currentSum -= 10;
+                    }
+                });
+            }
             return currentSum
         }
         function dealerSum() {
